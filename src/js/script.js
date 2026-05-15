@@ -10,7 +10,7 @@ const canvas=document.getElementById("canvas");
 async function configurarCamera(){
     try{
         const midia = await navigator.mediaDevices.getUserMedia({
-            video:{ facingMode: "environmente"}, // HABILITANDO A CAMERA TRASEIRA
+            video:{ facingMode: "environment"}, // HABILITANDO A CAMERA TRASEIRA
             audio:false //O AUDIO NÃO VAI SER CAPTADO
         })
     
