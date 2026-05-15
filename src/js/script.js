@@ -1,65 +1,64 @@
-// DESCLARAÇÕES DOS ELEMENTOS COM DOM
-
+//DECLARAÇÕES DOS ELEMENTOS COM DOM
 const videoElemento=document.getElementById("video");
-const botScanear=document.getElementById("btn-texto");
-const resultado=document.getElementById("saida");
-const canvas=document.getElementById("canvas");
+const botaoScanear=document.getElementById("btn-texto");
+const resultado = document.getElementById("saida");
+const canvas = document.getElementById("canvas");
 
-// FUNÇÃO PARA HABILITAR A CAMERA
+//função para habilitar a câmera
 
 async function configurarCamera(){
     try{
         const midia = await navigator.mediaDevices.getUserMedia({
-            video:{ facingMode: "environment"}, // HABILITANDO A CAMERA TRASEIRA
-            audio:false //O AUDIO NÃO VAI SER CAPTADO
+            video: { facingMode: "environment"}, //habilitando a camera traseira
+            audio:false // o audio não será capturado
         })
-    
-        // ATRIBUIR O FLUXO DA CAMERA EM MIDIA
+        //atribuir o fluxo da camera em midia
         videoElemento.srcObject = midia;
-        // GARANTE QUE A CAMERA VAI FUNCIONAR
+        //Garante que a câmera vai funcionar
         videoElemento.play();
     }catch(erro){
-        resultado.innerTexto="Erro ao capturar a câmera", erro;
+            resultado.innerText="Erro ao capturar a câmera",erro
     }
 }
-
-// EXECUTA A FUNÇÃO DA CAMERA
-
+//executa função da câmera
 configurarCamera();
 
-// FUNÇÃO PARA CAPTURAR O TEXTO
+//função para capturar o texto
 
 botaoScanear.onclick = async ()=>{
-    botaoScanear.disabled = true; // HABILITA O BOTAO DE PEGAR O TEXTO
-    resultado.innerText = "Fazendo a leitura... Aguarde";
+    botaoScanear.disabled =true;// habilita o botão para pegar o texto
+    resultado.innerText ="Fazendo a Leitura ...aguarde";
 
-    // PREPARA O CANVAS PRA RECEBER ESTRUTURA 2D
+    //prepara o canvas para receber a estrutura em 2d
     const contexto = canvas.getContext("2d");
 
+    //ajusta o tamnho do canvas de acordo com video
     canvas.width = videoElemento.videoWidth;
     canvas.height = videoElemento.videoHeight;
 
-    // DEFINE A MATRIZ DE TRANSFORMAÇÃO DO CANVAS (ESCALA, INCLINAÇÃO)
-
+    //define a matriz de transformação do canvas (escla, inclinação)
     contexto.setTransform(1, 0, 0, 1, 0, 0);
 
-    // APLICA FILTRO DE CONTRASTE PARA MELHORAR O OCR
-    contexto.filter = 'contrast(1, 2) grayscale(1)';
+    //aplica fitro de contrast para melhorar o OCR
+    contexto.filter = 'contrast(1.2) grayscale(1)';
 
+    //Desenha p video no canvas
     contexto.drawImage(videoElemento, 0, 0, canvas.width,canvas.height);
 
     try{
-        // O TESSERACT RETORNA O OBJETO
-        const {data: {text}} = await Tesseract.recognize(
+        //o tesseract retorna o objeto
+        const {data: { text }}= await Tesseract.recognize(
             canvas,
-            "por" //DEFINE O IDIOMA
+            'por' //define o idioma
         );
-        const textFinal = text.trim();
-        resultado.innerText = textoFinal.length > 0 ?textoFinal : "Não foi possível identificar o texto";
+        //remove todos os espaços em branco
+        const textoFinal= text.trim();
+        resultado.innerText=textoFinal.length > 0 ? textoFinal :"Não foi possivel identificar o texto";
     }catch(erro){
-        resultado.innerText = "Erro ao processar a leitura", erro
+        resultado.innerText="Erro ao processar a leitura",erro
     }finally{
-        // DESABILITA A LEITURA DO TEXTO PARA COMEÇAR NOVAMENTE
-        botaoScanear.Scanear.disabled=false;
+        //desabilita a leitura do texto para começar novamente.
+        botaoScanear.disabled=false;
     }
-} 
+}
+
